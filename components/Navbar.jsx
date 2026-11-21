@@ -9,6 +9,7 @@ import {
     Users,
     Handshake,
     History,
+    Award,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -38,6 +39,11 @@ export default function Navbar() {
             href: "/Register",
             label: "Register",
             icon: Ticket,
+        },
+        {
+            href: "/Certificate",
+            label: "Certificate",
+            icon: Award,
         },
         {
             href: "/AboutUs",
@@ -506,7 +512,7 @@ export default function Navbar() {
                 <div className="
                     flex
                     items-center
-                    gap-2
+                    gap-1
 
                     rounded-full
 
@@ -551,8 +557,9 @@ export default function Navbar() {
                                         items-center
                                         gap-2
                                         rounded-full
-                                        px-5
+                                        px-4
                                         py-3
+                                        xl:px-5
                                         text-sm
                                         font-medium
                                         transition-colors
@@ -565,7 +572,7 @@ export default function Navbar() {
                                     `}
                                 >
                                     <Icon size={18} className={`transition-transform duration-200 ${active ? "scale-105" : "group-hover:scale-110"}`} />
-                                    <span>{item.label}</span>
+                                    <span className="hidden lg:inline">{item.label}</span>
                                 </Link>
 
                                 {active && (
