@@ -63,23 +63,23 @@ export default function CertificatePortal() {
                 <div className="absolute right-0 top-24 h-80 w-80 rounded-full bg-amber-400/10 blur-[150px]" />
                 <div className="absolute inset-0 bg-linear-to-b from-transparent via-black/10 to-black" />
 
-                <div className="relative z-10 mx-auto max-w-7xl px-6 pb-10 pt-20 lg:pt-28">
+                <div className="relative z-10 mx-auto max-w-7xl px-4 pb-8 pt-20 sm:px-6 sm:pb-10 lg:pt-28">
                     {!result ? (
-                        <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-                            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                                <p className="mb-5 text-xs uppercase tracking-[0.45em] text-amber-300">TechZephyr 4.0 · IIT Bhubaneswar</p>
-                                <h1 className="bg-linear-to-b from-white via-zinc-300 to-zinc-600 bg-clip-text text-5xl font-black leading-none tracking-tight text-transparent md:text-7xl">
+                        <div className="grid grid-cols-1 items-center gap-6 sm:gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+                            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="min-w-0">
+                                <p className="mb-4 pr-14 text-[10px] uppercase tracking-[0.3em] text-amber-300 sm:mb-5 sm:pr-0 sm:text-xs sm:tracking-[0.45em]">TechZephyr 4.0 · IIT Bhubaneswar</p>
+                                <h1 className="bg-linear-to-b from-white via-zinc-300 to-zinc-600 bg-clip-text text-[min(2.6rem,10vw)] font-black leading-none tracking-tight text-transparent sm:text-6xl md:text-7xl">
                                     CERTIFICATES
                                 </h1>
-                                <h2 className="mt-3 text-2xl font-semibold md:text-4xl">
+                                <h2 className="mt-2 text-xl font-semibold sm:mt-3 sm:text-2xl md:text-4xl">
                                     Download yours<span className="text-amber-300">.</span>
                                 </h2>
-                                <p className="mt-6 max-w-xl text-base leading-8 text-white/60">
+                                <p className="mt-4 max-w-xl text-sm leading-7 text-white/60 sm:mt-6 sm:text-base sm:leading-8">
                                     Sign in with your registered email and roll number to download every
                                     certificate you earned at TechZephyr 4.0 — each one verifiable by QR.
                                 </p>
 
-                                <ul className="mt-8 grid gap-3 sm:grid-cols-3">
+                                <ul className="mt-8 hidden gap-3 sm:grid sm:grid-cols-3">
                                     {points.map(({ icon: Icon, title, text }) => (
                                         <li key={title} className="rounded-lg border border-white/10 bg-white/[0.035] p-3 backdrop-blur-xl">
                                             <Icon size={16} className="text-amber-300" />
@@ -96,7 +96,7 @@ export default function CertificatePortal() {
                                 initial={{ opacity: 0, x: 30 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.4, delay: 0.1 }}
-                                className="relative overflow-hidden rounded-xl border border-white/10 bg-black/60 p-6 shadow-[0_0_70px_rgba(251,191,36,.07)] backdrop-blur-2xl sm:p-7"
+                                className="relative min-w-0 overflow-hidden rounded-xl border border-white/10 bg-black/60 p-5 shadow-[0_0_70px_rgba(251,191,36,.07)] backdrop-blur-2xl sm:p-7"
                             >
                                 <div className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full bg-amber-400/10 blur-[90px]" />
 
@@ -121,7 +121,7 @@ export default function CertificatePortal() {
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             placeholder="you@example.com"
-                                            className="h-12 w-full rounded-lg border border-white/10 bg-white/[0.04] pl-10 pr-3 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-amber-400"
+                                            className="h-12 w-full rounded-lg border border-white/10 bg-white/[0.04] pl-10 pr-3 text-base text-white sm:text-sm outline-none transition placeholder:text-white/25 focus:border-amber-400"
                                         />
                                     </div>
                                 </label>
@@ -137,7 +137,7 @@ export default function CertificatePortal() {
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             placeholder="Your roll number"
-                                            className="h-12 w-full rounded-lg border border-white/10 bg-white/[0.04] pl-10 pr-11 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-amber-400"
+                                            className="h-12 w-full rounded-lg border border-white/10 bg-white/[0.04] pl-10 pr-11 text-base text-white sm:text-sm outline-none transition placeholder:text-white/25 focus:border-amber-400"
                                         />
                                         <button
                                             type="button"
@@ -169,6 +169,17 @@ export default function CertificatePortal() {
                                 <p className="mt-4 text-center text-[11px] leading-5 text-white/35">
                                     Roll number is not case-sensitive; spaces, “/” and “-” are ignored.
                                 </p>
+
+                                <ul className="mt-5 grid gap-2 border-t border-white/10 pt-4 sm:hidden">
+                                    {points.map(({ icon: Icon, title, text }) => (
+                                        <li key={title} className="flex items-start gap-2.5">
+                                            <Icon size={14} className="mt-0.5 shrink-0 text-amber-300" />
+                                            <p className="text-[11px] leading-4 text-white/45">
+                                                <span className="font-semibold text-white/75">{title}.</span> {text}
+                                            </p>
+                                        </li>
+                                    ))}
+                                </ul>
                             </motion.form>
                         </div>
                     ) : (
@@ -179,7 +190,7 @@ export default function CertificatePortal() {
                                         <ShieldCheck size={14} />
                                         Signed in
                                     </p>
-                                    <h1 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">
+                                    <h1 className="mt-3 break-words text-2xl font-black tracking-tight sm:text-3xl md:text-5xl">
                                         Hi, <span className="text-amber-300">{result.name}</span>
                                     </h1>
                                     <p className="mt-2 text-sm text-white/55">
@@ -205,9 +216,9 @@ export default function CertificatePortal() {
                 CERTIFICATES
             ========================================================= */}
             {result && (
-                <section className="mx-auto max-w-7xl px-6">
+                <section className="mx-auto max-w-7xl px-4 sm:px-6">
                     {result.certificates.length ? (
-                        <div className={`grid gap-4 ${result.certificates.length > 1 ? "lg:grid-cols-2" : "mx-auto max-w-4xl"}`}>
+                        <div className={`grid grid-cols-1 gap-4 ${result.certificates.length > 1 ? "lg:grid-cols-2" : "mx-auto max-w-4xl"}`}>
                             {result.certificates.map((c) => (
                                 <CertificateView key={c.id} cert={c} />
                             ))}

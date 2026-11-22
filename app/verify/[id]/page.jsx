@@ -20,15 +20,15 @@ const IITBBS_LOGO = "https://upload.wikimedia.org/wikipedia/en/8/82/Indian_Insti
 
 function Logos() {
     return (
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-3 sm:gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={IITBBS_LOGO} alt="IIT Bhubaneswar" className="h-14 w-14 rounded-lg bg-white object-contain p-1.5" />
+            <img src={IITBBS_LOGO} alt="IIT Bhubaneswar" className="h-11 w-11 rounded-lg bg-white object-contain p-1 sm:h-14 sm:w-14 sm:p-1.5" />
             <span className="h-8 w-px bg-white/15" />
-            <span className="relative h-14 w-14 overflow-hidden rounded-lg bg-white">
+            <span className="relative h-11 w-11 overflow-hidden rounded-lg bg-white sm:h-14 sm:w-14">
                 <Image src="/stc.jpg" alt="Science & Technology Council" fill sizes="56px" className="object-contain" />
             </span>
             <span className="h-8 w-px bg-white/15" />
-            <span className="relative h-14 w-14 overflow-hidden rounded-lg">
+            <span className="relative h-11 w-11 overflow-hidden rounded-lg sm:h-14 sm:w-14">
                 <Image src="/logo.jpeg" alt="TechZephyr 4.0" fill sizes="56px" className="object-cover" />
             </span>
         </div>
@@ -68,7 +68,7 @@ export default async function VerifyPage({ params }) {
                 />
                 <div className="absolute inset-0 bg-linear-to-b from-transparent via-black/30 to-black" />
 
-                <div className="relative z-10 mx-auto max-w-5xl px-5 pb-8 pt-16 sm:px-6 md:pt-20">
+                <div className="relative z-10 mx-auto max-w-5xl px-4 pb-8 pt-20 sm:px-6">
                     <Logos />
 
                     {cert ? (
@@ -83,7 +83,7 @@ export default async function VerifyPage({ params }) {
                                     <BadgeCheck size={13} />
                                     Verified Authentic
                                 </span>
-                                <h1 className="mt-4 bg-linear-to-b from-white via-zinc-200 to-zinc-500 bg-clip-text text-3xl font-black leading-tight text-transparent sm:text-5xl">
+                                <h1 className="mt-4 bg-linear-to-b from-white via-zinc-200 to-zinc-400 bg-clip-text text-[1.9rem] font-black leading-tight text-transparent sm:text-5xl">
                                     Official Finalist Certificate
                                 </h1>
                                 <p className="mt-3 max-w-2xl text-sm leading-7 text-white/60 sm:text-base">
@@ -93,8 +93,8 @@ export default async function VerifyPage({ params }) {
                             </div>
 
                             {/* ---------- DETAILS ---------- */}
-                            <div className="mt-8 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-                                <div className="rounded-xl border border-emerald-400/20 bg-black/50 p-5 backdrop-blur-2xl">
+                            <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-[0.9fr_1.1fr] [&>*]:min-w-0">
+                                <div className="rounded-xl border border-emerald-400/20 bg-black/50 p-4 backdrop-blur-2xl sm:p-5">
                                     <div className="flex items-center justify-between border-b border-white/10 pb-3">
                                         <p className="text-[10px] uppercase tracking-[0.35em] text-white/40">Certificate Details</p>
                                         <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300">
