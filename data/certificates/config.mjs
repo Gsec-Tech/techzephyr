@@ -11,7 +11,7 @@
    After editing sheet1.csv or this file run:  npm run certs
 ========================================================= */
 
-export const SITE_URL = "techzephyr.org";
+export const SITE_URL = "https://techzephyr.org";
 
 export const EVENT_NAME = "TechZephyr 4.0";
 
@@ -22,6 +22,9 @@ export const COMPETITIONS = {
     "case comp": { code: "CSC", slug: "case-study-competition", title: "Case Study Competition" },
     "b-plan": { code: "BPC", slug: "b-plan-competition", title: "Business Plan Competition" },
     "cadathon": { code: "CAD", slug: "cadathon", title: "CADathon" },
+    "design marathon": { code: "DSM", slug: "design-marathon", title: "Design Marathon" },
+    "turtlebot": { code: "TBC", slug: "turtlebot-pursuit-evasion", title: "TurtleBot Pursuit & Evasion Challenge" },
+    "cp contest": { code: "CPC", slug: "cp-contest", title: "Competitive Programming Contest" },
 };
 
 /* Labels that mean "no certificate" */

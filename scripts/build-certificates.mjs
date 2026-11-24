@@ -6,7 +6,7 @@
      so QR codes already printed/shared keep working.
 ========================================================= */
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -14,6 +14,7 @@ import { COMPETITIONS, SKIP_LABELS, ID_SALT } from "../data/certificates/config.
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SRC = resolve(root, "data/certificates/sheet1.csv");
+const ADDITIONS = resolve(root, "data/certificates/additions.csv");
 const OUT = resolve(root, "lib/server/certificates.json");
 
 /* ---------- CSV parser (quotes, commas, CRLF) ---------- */
@@ -84,59 +85,77 @@ function certId(email, code) {
     return `TZ4-${code}-${h.slice(0, 8)}`;
 }
 
-const table = parseCSV(readFileSync(SRC, "utf8"));
-const header = table[0].map((h) => norm(h));
-const col = (names) => header.findIndex((h) => names.includes(h));
-const iName = col(["name", "fullname"]);
-const iEmail = col(["email", "emailaddress"]);
-const iComp = col(["competition", "competitions", "event"]);
-const iRoll = col(["rollnumber", "roll", "rollno"]);
-
-if ([iName, iEmail, iComp, iRoll].some((i) => i < 0)) {
-    throw new Error("sheet1.csv must have columns: Name, Email, Competition, Roll Number");
-}
-
-const participants = {}; // email -> { name, passwords, certificates[] }
+const participants = {}; // email -> { name, passwords, certificates[] }  (alias emails point to the same object)
 const unknownLabels = new Set();
 let certCount = 0;
+let skippedUnapproved = 0;
 
-for (const r of table.slice(1)) {
-    const email = String(r[iEmail] || "").trim().toLowerCase();
-    if (!email) continue;
+function ingest(file, { requireApproval }) {
+    const table = parseCSV(readFileSync(file, "utf8"));
+    const header = table[0].map((h) => norm(h));
+    const col = (names) => header.findIndex((h) => names.includes(h));
+    const iName = col(["name", "fullname"]);
+    const iEmail = col(["email", "emailaddress"]);
+    const iComp = col(["competition", "competitions", "event"]);
+    const iRoll = col(["rollnumber", "roll", "rollno"]);
+    const iApproved = col(["approved"]);
 
-    const name = tidyName(r[iName]);
-    const p =
-        participants[email] ||
-        (participants[email] = { name, passwords: [], certificates: [] });
+    if ([iName, iEmail, iComp, iRoll].some((i) => i < 0)) {
+        throw new Error(`${file} must have columns: Name, Email, Competition, Roll Number`);
+    }
 
-    p.passwords = Array.from(new Set([...p.passwords, ...passwordsFor(r[iRoll])]));
-
-    const labels = String(r[iComp] || "")
-        .split(",")
-        .map((s) => s.trim().toLowerCase());
-
-    for (const label of labels) {
-        if (SKIP_LABELS.includes(label)) continue;
-        const comp = COMPETITIONS[label];
-        if (!comp) {
-            unknownLabels.add(label);
+    for (const r of table.slice(1)) {
+        if (requireApproval && !/^(yes|y|true|1|approved)$/i.test(String(r[iApproved] || "").trim())) {
+            skippedUnapproved++;
             continue;
         }
-        if (p.certificates.some((c) => c.code === comp.code)) continue;
-        p.certificates.push({
-            id: certId(email, comp.code),
-            name,
-            code: comp.code,
-            slug: comp.slug,
-            competition: comp.title,
-        });
-        certCount++;
+
+        // "a@x.com; b@y.com" → first is primary (used for the certificate ID), rest are login aliases
+        const emails = String(r[iEmail] || "")
+            .split(/[;\s]+/)
+            .map((e) => e.trim().toLowerCase())
+            .filter((e) => e.includes("@"));
+        if (!emails.length) continue;
+        const email = emails[0];
+
+        const name = tidyName(r[iName]);
+        const p =
+            participants[email] ||
+            (participants[email] = { name, passwords: [], certificates: [] });
+        for (const alias of emails.slice(1)) participants[alias] = p;
+
+        p.passwords = Array.from(new Set([...p.passwords, ...passwordsFor(r[iRoll])]));
+
+        const labels = String(r[iComp] || "")
+            .split(",")
+            .map((s) => s.trim().toLowerCase());
+
+        for (const label of labels) {
+            if (SKIP_LABELS.includes(label)) continue;
+            const comp = COMPETITIONS[label];
+            if (!comp) {
+                unknownLabels.add(label);
+                continue;
+            }
+            if (p.certificates.some((c) => c.code === comp.code)) continue;
+            p.certificates.push({
+                id: certId(email, comp.code),
+                name,
+                code: comp.code,
+                slug: comp.slug,
+                competition: comp.title,
+            });
+            certCount++;
+        }
     }
 }
 
+ingest(SRC, { requireApproval: false });
+if (existsSync(ADDITIONS)) ingest(ADDITIONS, { requireApproval: true });
+
 /* Index by certificate ID for the public verify page */
 const byId = {};
-for (const p of Object.values(participants)) {
+for (const p of new Set(Object.values(participants))) {
     for (const c of p.certificates) {
         if (byId[c.id]) throw new Error(`Duplicate certificate ID ${c.id}`);
         byId[c.id] = c;
@@ -147,7 +166,8 @@ mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), participants, byId }, null, 0));
 
 console.log(
-    `✓ ${Object.keys(participants).length} participants, ${certCount} certificates → lib/server/certificates.json`
+    `✓ ${new Set(Object.values(participants)).size} participants, ${certCount} certificates → lib/server/certificates.json` +
+        (skippedUnapproved ? ` (${skippedUnapproved} additions not approved yet)` : "")
 );
 if (unknownLabels.size) {
     console.warn(`⚠ Unknown competition labels (add to data/certificates/config.mjs): ${[...unknownLabels].join(", ")}`);

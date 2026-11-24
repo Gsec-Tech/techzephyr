@@ -47,6 +47,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
   ```
 
   This regenerates `lib/server/certificates.json` (server-only — never sent to the browser). Certificate IDs are stable, so already-shared QR codes keep working.
+- Extra people (from the certificate query form etc.) go in `data/certificates/additions.csv` with `Approved` = `YES`. Rows marked anything else are ignored. Several login emails for one person: put them in the Email cell separated by `;` (the first one is the main email).
 - Set `SITE_URL` in `data/certificates/config.mjs` to your live domain so QR codes always point there (otherwise the current site address is used).
 - Template: `public/certificates/template.png` (2000×1414). Text positions are in `lib/certificateRenderer.js` (`LAYOUT`).
 - Keep the repo **private** — the sheet contains participant emails and roll numbers.
